@@ -3,8 +3,6 @@ package procast.controlador;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -14,8 +12,8 @@ import java.util.logging.Logger;
 import javax.swing.CodeEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import procast.vista.UIMain;
@@ -212,6 +210,31 @@ public class CMain implements IMain
             {
                 panel.setText(panel.getText() + linea + "\n");
             }
+            
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void analizarSemantico(CodeEditorPane editor, JTree arbol)
+    {
+        if(file == null)
+            guardarComo(editor);
+        try
+        {
+            Runtime r = Runtime.getRuntime();
+            Process p;
+            BufferedReader br;
+            
+            String linea;
+            
+            /* Compilador */
+            p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 2");
+
+            br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            
             
         }
         catch (IOException ex)

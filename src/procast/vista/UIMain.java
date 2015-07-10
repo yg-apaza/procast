@@ -46,6 +46,7 @@ public class UIMain extends javax.swing.JFrame {
         syntax.put("saltar", Color.BLUE);
         syntax.put("caso", Color.BLUE);
         syntax.put("pordefecto", Color.BLUE);
+        syntax.put("const", Color.BLUE);
         
         syntax.put("principal", Color.RED);
         
@@ -93,7 +94,8 @@ public class UIMain extends javax.swing.JFrame {
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         jSeparator1 = new javax.swing.JSeparator();
         btnALexico = new javax.swing.JButton();
@@ -104,6 +106,11 @@ public class UIMain extends javax.swing.JFrame {
         txpLexico = new javax.swing.JTextPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         txpSintactico = new javax.swing.JTextPane();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        ast = new javax.swing.JTree();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         btnCompilar = new javax.swing.JButton();
         panel = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -130,8 +137,10 @@ public class UIMain extends javax.swing.JFrame {
         btnALexico.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/lex1.png"))); // NOI18N
         btnALexico.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         btnALexico.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnALexico.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnALexico.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnALexicoActionPerformed(evt);
             }
         });
@@ -149,8 +158,10 @@ public class UIMain extends javax.swing.JFrame {
         btnASintactico.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/syn1.png"))); // NOI18N
         btnASintactico.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         btnASintactico.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnASintactico.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnASintactico.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 btnASintacticoActionPerformed(evt);
             }
         });
@@ -169,7 +180,15 @@ public class UIMain extends javax.swing.JFrame {
         btnASemantico.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/sem1.png"))); // NOI18N
         btnASemantico.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         btnASemantico.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnASemantico.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnASemanticoActionPerformed(evt);
+            }
+        });
 
+        txpLexico.setEditable(false);
         jScrollPane3.setViewportView(txpLexico);
 
         pnl.addTab("Analizador Lexico", jScrollPane3);
@@ -178,6 +197,38 @@ public class UIMain extends javax.swing.JFrame {
         jScrollPane1.setViewportView(txpSintactico);
 
         pnl.addTab("Analizador Sintáctico", jScrollPane1);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        ast.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane2.setViewportView(ast);
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane4.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        pnl.addTab("Analizador Semantico", jPanel1);
 
         btnCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/play2.png"))); // NOI18N
         btnCompilar.setText("COMPILAR");
@@ -207,32 +258,40 @@ public class UIMain extends javax.swing.JFrame {
         mnArchivo.setText("Archivo");
 
         mnNuevo.setText("Nuevo");
-        mnNuevo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        mnNuevo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 mnNuevoActionPerformed(evt);
             }
         });
         mnArchivo.add(mnNuevo);
 
         mnAbrir.setText("Abrir");
-        mnAbrir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        mnAbrir.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 mnAbrirActionPerformed(evt);
             }
         });
         mnArchivo.add(mnAbrir);
 
         mnGuardar.setText("Guardar");
-        mnGuardar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        mnGuardar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 mnGuardarActionPerformed(evt);
             }
         });
         mnArchivo.add(mnGuardar);
 
         mnGuardarComo.setText("Guardar como");
-        mnGuardarComo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        mnGuardarComo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 mnGuardarComoActionPerformed(evt);
             }
         });
@@ -287,9 +346,9 @@ public class UIMain extends javax.swing.JFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnl, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(pnl)
                     .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         pack();
@@ -319,16 +378,26 @@ public class UIMain extends javax.swing.JFrame {
         interfaceMain.analizarSintactico(edit, this.txpSintactico);
     }//GEN-LAST:event_btnASintacticoActionPerformed
 
+    private void btnASemanticoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnASemanticoActionPerformed
+    {//GEN-HEADEREND:event_btnASemanticoActionPerformed
+        interfaceMain.analizarSemantico(edit, ast);
+    }//GEN-LAST:event_btnASemanticoActionPerformed
+
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTree ast;
     private javax.swing.JButton btnALexico;
     private javax.swing.JButton btnASemantico;
     private javax.swing.JButton btnASintactico;
     private javax.swing.JButton btnCompilar;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JMenuItem mnAbrir;
     private javax.swing.JMenuItem mnAcerca;
     private javax.swing.JMenu mnArchivo;

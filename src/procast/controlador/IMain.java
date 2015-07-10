@@ -3,6 +3,7 @@ package procast.controlador;
 import javax.swing.CodeEditorPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.JTree;
 
 public interface IMain
 {
@@ -14,4 +15,5 @@ public interface IMain
     public void analizarLexico(CodeEditorPane editor, JTextPane panel);
     public void cargar(CodeEditorPane editor);
     public void analizarSintactico(CodeEditorPane editor, JTextPane panel);
+    public void analizarSemantico(CodeEditorPane editor, JTree arbol);
 }
