@@ -173,7 +173,6 @@ public class UIMain extends javax.swing.JFrame {
         btnASemantico.setBorderPainted(false);
         btnASemantico.setContentAreaFilled(false);
         btnASemantico.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnASemantico.setEnabled(false);
         btnASemantico.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnASemantico.setIconTextGap(-3);
         btnASemantico.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/sem3.png"))); // NOI18N
