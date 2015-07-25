@@ -1,95 +1,33 @@
 package procast.vista;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.HashMap;
 import javax.swing.BoxLayout;
-import javax.swing.CodeEditorPane;
-import javax.swing.DefaultSyntaxColorizer;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 import procast.controlador.IMain;
 
-public class UIMain extends javax.swing.JFrame {
+public class UIMain extends javax.swing.JFrame
+{
     
     private IMain interfaceMain;
-    private final CodeEditorPane edit;
-    
+    private final RSyntaxTextArea textArea = new RSyntaxTextArea(30, 85);  
     
     public UIMain(IMain interfaceMain)
     {
         this.setVisible(true);
         this.setTitle("ProCast");
         
-        /* editor */
-        final HashMap<String, Color> syntax = new DefaultSyntaxColorizer.RegExpHashMap();
-        
-        /*Tipos de Datos */
-        syntax.put("vacio", (new Color(0, 128, 0)));
-        syntax.put("entero", (new Color(0, 128, 0)));
-        syntax.put("real", (new Color(0, 128, 0)));
-        syntax.put("cadena", (new Color(0, 128, 0)));
-        
-        /* Palabras reservadas */
-        syntax.put("suma", Color.BLUE);
-        syntax.put("resta", Color.BLUE);
-        syntax.put("producto", Color.BLUE);
-        syntax.put("transpuesta", Color.BLUE);
-        syntax.put("inversa", Color.BLUE);
-        syntax.put("leer", Color.BLUE);
-        syntax.put("mostrar", Color.BLUE);
-        syntax.put("retornar", Color.BLUE);
-        syntax.put("si", Color.BLUE);
-        syntax.put("sino", Color.BLUE);
-        syntax.put("mientras", Color.BLUE);
-        syntax.put("hacer", Color.BLUE);
-        syntax.put("para", Color.BLUE);
-        syntax.put("selector", Color.BLUE);
-        syntax.put("saltar", Color.BLUE);
-        syntax.put("caso", Color.BLUE);
-        syntax.put("pordefecto", Color.BLUE);
-        syntax.put("const", Color.BLUE);
-        
-        syntax.put("principal", Color.RED);
-        
-        edit = new CodeEditorPane();
-        edit.setKeywordColor(syntax);
-
-        HashMap<String, String> help = new HashMap<String, String>();
-        help.put("vacio", "Tipo de dato vacío");
-        help.put("entero", "Tipo de dato entero");
-        help.put("real", "Tipo de dato real");
-        help.put("cadena", "Tipo de dato cadena");
-        help.put("suma", "Función suma de matrices");
-        help.put("resta", "Función resta de matrices");
-        help.put("producto", "Función producto de matrices");
-        help.put("transpuesta", "Función transpuesta de matrices");
-        help.put("inversa", "Función inversa de matrices");
-        help.put("leer", "Lee una entrada de datos");
-        help.put("mostrar", "Mostrar una salida de datos");
-        help.put("retornar", "Retorna al punto desde el que fue llamado");
-        help.put("si", "Sentencia Condicional 'si'");
-        help.put("sino", "Sentencia Condicional 'sino'");
-        help.put("mientras", "Sentencia Cíclica 'mientras'");
-        help.put("hacer", "Sentencia Cíclica 'hacer'");
-        help.put("para", "Sentencia Cíclica 'para'");
-        help.put("selector", "Sentencia selección múltiple 'selector'");
-        help.put("saltar", "Aborta una ejecución");
-        help.put("caso", "Caso del selector");
-        help.put("pordefecto", "Caso por defecto del selector");
-        help.put("principal", "Función principal de LeMa");
-        edit.setKeywordHelp(help);
-        
-        edit.setVerticalLineAtPos(80);
-
-        /* fin editor */
         initComponents();
-        
-        this.panel.setPreferredSize(new Dimension(600, 400));
-        this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.X_AXIS));
-        this.panel.add(edit.getContainerWithLines());
-        this.pack();
+        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        textArea.setCodeFoldingEnabled(true);
+        RTextScrollPane sp = new RTextScrollPane(textArea);
+        panel.add(sp);
+        panel.setLayout(new BoxLayout(this.panel, BoxLayout.X_AXIS));
+        pack();
+        setLocationRelativeTo(null);
         this.interfaceMain = interfaceMain;
-        
-        interfaceMain.cargar(edit);
+
+        interfaceMain.cargar(textArea);
     }
 
     @SuppressWarnings("unchecked")
@@ -97,13 +35,15 @@ public class UIMain extends javax.swing.JFrame {
     private void initComponents()
     {
 
-        jSeparator1 = new javax.swing.JSeparator();
+        jPanel3 = new javax.swing.JPanel();
         btnALexico = new javax.swing.JButton();
         btnASintactico = new javax.swing.JButton();
         btnASemantico = new javax.swing.JButton();
+        btnCompilar = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jPanel2 = new javax.swing.JPanel();
+        panel = new javax.swing.JPanel();
         pnl = new javax.swing.JTabbedPane();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        txpLexico = new javax.swing.JTextPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         txpSintactico = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
@@ -111,8 +51,8 @@ public class UIMain extends javax.swing.JFrame {
         ast = new javax.swing.JTree();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        btnCompilar = new javax.swing.JButton();
-        panel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txpLexico = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         mnArchivo = new javax.swing.JMenu();
         mnNuevo = new javax.swing.JMenuItem();
@@ -187,48 +127,6 @@ public class UIMain extends javax.swing.JFrame {
             }
         });
 
-        txpLexico.setEditable(false);
-        jScrollPane3.setViewportView(txpLexico);
-
-        pnl.addTab("Analizador Lexico", jScrollPane3);
-
-        txpSintactico.setEditable(false);
-        jScrollPane1.setViewportView(txpSintactico);
-
-        pnl.addTab("Analizador Sintáctico", jScrollPane1);
-
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        ast.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jScrollPane2.setViewportView(ast);
-
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane4.setViewportView(jTextArea1);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        pnl.addTab("Analizador Semantico", jPanel1);
-
         btnCompilar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/play2.png"))); // NOI18N
         btnCompilar.setText("COMPILAR");
         btnCompilar.setBorder(null);
@@ -252,6 +150,105 @@ public class UIMain extends javax.swing.JFrame {
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        txpSintactico.setEditable(false);
+        jScrollPane1.setViewportView(txpSintactico);
+
+        pnl.addTab("Analizador Sintáctico", jScrollPane1);
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("AST");
+        ast.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane2.setViewportView(ast);
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane4.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        pnl.addTab("Analizador Semantico", jPanel1);
+
+        txpLexico.setEditable(false);
+        jScrollPane3.setViewportView(txpLexico);
+
+        pnl.addTab("Analizador Lexico", jScrollPane3);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnl, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnl)
+                    .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(btnALexico, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnASintactico, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnASemantico, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(366, 366, 366)
+                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 454, Short.MAX_VALUE))
+                    .addComponent(jSeparator1))
+                .addContainerGap())
+            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnASintactico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnALexico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnASemantico, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCompilar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         mnArchivo.setText("Archivo");
@@ -312,74 +309,48 @@ public class UIMain extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(btnALexico, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnASintactico, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnASemantico, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(342, 342, 342)
-                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(26, 26, 26)
-                                .addComponent(pnl, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jSeparator1))))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnASintactico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnALexico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnASemantico, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCompilar, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnl)
-                    .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void mnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnNuevoActionPerformed
-        interfaceMain.nuevo(edit);
+        interfaceMain.nuevo(textArea);
     }//GEN-LAST:event_mnNuevoActionPerformed
 
     private void mnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnAbrirActionPerformed
-        interfaceMain.abrir(edit);
+        interfaceMain.abrir(textArea);
     }//GEN-LAST:event_mnAbrirActionPerformed
 
     private void mnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnGuardarActionPerformed
-        interfaceMain.guardar(edit);
+        interfaceMain.guardar(textArea);
     }//GEN-LAST:event_mnGuardarActionPerformed
 
     private void mnGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnGuardarComoActionPerformed
-        interfaceMain.guardarComo(edit);
+        interfaceMain.guardarComo(textArea);
     }//GEN-LAST:event_mnGuardarComoActionPerformed
 
     private void btnALexicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnALexicoActionPerformed
-        interfaceMain.analizarLexico(edit, this.txpLexico);
+        interfaceMain.analizarLexico(textArea, this.txpLexico);
     }//GEN-LAST:event_btnALexicoActionPerformed
 
     private void btnASintacticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnASintacticoActionPerformed
-        interfaceMain.analizarSintactico(edit, this.txpSintactico);
+        interfaceMain.analizarSintactico(textArea, this.txpSintactico);
     }//GEN-LAST:event_btnASintacticoActionPerformed
 
     private void btnASemanticoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnASemanticoActionPerformed
     {//GEN-HEADEREND:event_btnASemanticoActionPerformed
-        interfaceMain.analizarSemantico(edit, ast);
+        interfaceMain.analizarSemantico(textArea, ast);
     }//GEN-LAST:event_btnASemanticoActionPerformed
 
    
@@ -391,6 +362,8 @@ public class UIMain extends javax.swing.JFrame {
     private javax.swing.JButton btnCompilar;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

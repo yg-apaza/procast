@@ -6,16 +6,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.CodeEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import procast.vista.UIMain;
 
 public class CMain implements IMain
@@ -30,7 +33,7 @@ public class CMain implements IMain
         this.file = file;
     }
     
-    public void nuevo(CodeEditorPane editor)
+    public void nuevo(RSyntaxTextArea editor)
     {
         if(!mem.equals(editor.getText()))
         {
@@ -51,7 +54,7 @@ public class CMain implements IMain
         cargar(editor);
     }
     
-    public void abrir(CodeEditorPane editor)
+    public void abrir(RSyntaxTextArea editor)
     {
         if(!mem.equals(editor.getText()))
         {
@@ -99,7 +102,7 @@ public class CMain implements IMain
         }
     }
     
-    public void guardar(CodeEditorPane editor)
+    public void guardar(RSyntaxTextArea editor)
     {
         PrintWriter out = null;
         try
@@ -122,7 +125,7 @@ public class CMain implements IMain
     }
 
     
-    public void guardarComo(CodeEditorPane editor)
+    public void guardarComo(RSyntaxTextArea editor)
     {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Guardar archivo como");
@@ -156,7 +159,7 @@ public class CMain implements IMain
     
     /* ANALIZADORES */
     
-    public void analizarLexico(CodeEditorPane editor, JTextPane panel)
+    public void analizarLexico(RSyntaxTextArea editor, JTextPane panel)
     {
         if(file == null)
             guardarComo(editor);
@@ -187,7 +190,7 @@ public class CMain implements IMain
         }
     }
     
-    public void analizarSintactico(CodeEditorPane editor, JTextPane panel)
+    public void analizarSintactico(RSyntaxTextArea editor, JTextPane panel)
     {
         if(file == null)
             guardarComo(editor);
@@ -218,22 +221,63 @@ public class CMain implements IMain
         }
     }
     
-    public void analizarSemantico(CodeEditorPane editor, JTree arbol)
+    public void analizarSemantico(RSyntaxTextArea editor, JTree arbol)
     {
         if(file == null)
             guardarComo(editor);
         try
         {
             Runtime r = Runtime.getRuntime();
+            
             Process p;
             BufferedReader br;
             
-            String linea;
             
             /* Compilador */
             p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 2");
 
             br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            
+            String linea = "";
+            
+            /* A partir de aqui debes copiar sin hacer cambios ni NADA */
+            
+            DefaultTreeModel modelo = null;
+            
+            ArrayList <DefaultMutableTreeNode> padres = new ArrayList <>();
+            ArrayList <String> labels = new ArrayList <>();
+            
+            for(int i = 0; i < 5; i++)
+            {
+                linea = br.readLine();
+                System.out.println("LINEA IGNORADA : " + linea);
+            }
+                        
+            if((linea = br.readLine()) != null)
+            {                
+                String padre = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
+                DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(padre);
+                padres.add(nodo);
+                labels.add(padre);
+                modelo = new DefaultTreeModel(nodo);
+            }
+            
+            while((linea = br.readLine()) != null)
+            {
+                String hijo = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
+                DefaultMutableTreeNode son = new DefaultMutableTreeNode(hijo);
+                padres.add(son);
+                labels.add(hijo);
+                
+                String padre = linea.substring(linea.indexOf("(")+2,linea.indexOf("+")-1);                
+                DefaultMutableTreeNode father = padres.get(labels.indexOf(padre));  
+                
+                int num = Integer.parseInt(linea.substring(linea.indexOf("+")+2,linea.indexOf(")")-1));
+                
+                modelo.insertNodeInto(son, father, num);
+            }
+            
+            arbol.setModel(modelo);
             
             
         }
@@ -243,7 +287,7 @@ public class CMain implements IMain
         }
     }
     
-    public void cargar(CodeEditorPane editor)
+    public void cargar(RSyntaxTextArea editor)
     {
         try {
             Scanner scan = new Scanner(new File("plantilla.lm"));
