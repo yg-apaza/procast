@@ -1,15 +1,16 @@
 package procast.controlador;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
@@ -19,6 +20,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Style;
+import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
+import org.fife.ui.rsyntaxtextarea.Token;
 import procast.vista.UIMain;
 
 public class CMain implements IMain
@@ -33,6 +37,7 @@ public class CMain implements IMain
         this.file = file;
     }
     
+    @Override
     public void nuevo(RSyntaxTextArea editor)
     {
         if(!mem.equals(editor.getText()))
@@ -51,9 +56,12 @@ public class CMain implements IMain
             }
         }
         file = null;
+        mem = "";
         cargar(editor);
+        ventanaPrincipal.setTitle("ProCast - Archivo Nuevo");
     }
     
+    @Override
     public void abrir(RSyntaxTextArea editor)
     {
         if(!mem.equals(editor.getText()))
@@ -80,29 +88,41 @@ public class CMain implements IMain
 
         if (chooser.showDialog(null, "Abrir") == JFileChooser.APPROVE_OPTION)
         {
-            try {
+            try
+            {
                 File fake = chooser.getSelectedFile();
                 if(!(fake.getAbsolutePath().substring(fake.getAbsolutePath().length() - 3, fake.getAbsolutePath().length())).equals(".lm"))
                     file = new File(fake.getAbsolutePath() + ".lm");
                 else
                     file = new File(fake.getAbsolutePath());
-
-                Scanner scan = new Scanner(file);
+                
+                FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+                
 
                 String contenido = "";
-                while(scan.hasNextLine())
-                {
-                    contenido += (scan.nextLine() + "\n");
-                }
-                scan.close();
+                String linea = "";
+
+                while((linea = br.readLine()) != null)     
+                    contenido += (linea + "\n");             
+                
                 editor.setText(contenido);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
+                mem = editor.getText();
+                ventanaPrincipal.setTitle("ProCast - " + file.getAbsolutePath());
+            }
+            catch (FileNotFoundException ex)
+            {
+                ex.printStackTrace();
+            }
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
             }
         }
     }
     
-    public void guardar(RSyntaxTextArea editor)
+    @Override
+    public boolean guardar(RSyntaxTextArea editor)
     {
         PrintWriter out = null;
         try
@@ -113,19 +133,22 @@ public class CMain implements IMain
                 out.print(editor.getText());
                 out.close();
                 mem = editor.getText();
-                
+                return true;
             }
             else
             {
-                guardarComo(editor);
+                return guardarComo(editor);
             }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+        catch(FileNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
-    
-    public void guardarComo(RSyntaxTextArea editor)
+    @Override
+    public boolean guardarComo(RSyntaxTextArea editor)
     {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Guardar archivo como");
@@ -148,159 +171,211 @@ public class CMain implements IMain
                 out.print(editor.getText());
                 
                 mem = editor.getText();
-                
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
+                ventanaPrincipal.setTitle("ProCast - " + file.getAbsolutePath());
+                return true;
+            }
+            catch (FileNotFoundException ex)
+            {
+                ex.printStackTrace();
+            }
+            finally
+            {
                 out.close();
             }
         }
+        return false;
     }
     
     /* ANALIZADORES */
     
+    @Override
     public void analizarLexico(RSyntaxTextArea editor, JTextPane panel)
     {
+        boolean archivoGuardado = true;
+        
         if(file == null)
-            guardarComo(editor);
-        try
+            archivoGuardado = guardarComo(editor);
+        else if(!mem.equals(editor.getText()))
+            archivoGuardado = guardar(editor);
+        
+        if(archivoGuardado)
         {
-            Runtime r = Runtime.getRuntime();
-            Process p;
-            BufferedReader br;
-            
-            String linea;
-            
-            /* Compilador */
-            p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 0");
-
-            br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            
-            panel.setText("");
-            
-            while ((linea = br.readLine()) != null)
+            try
             {
-                panel.setText(panel.getText() + linea + "\n");
+                Runtime r = Runtime.getRuntime();
+                Process p;
+                BufferedReader br;
+
+                String linea;
+                
+                p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 0");
+                br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String contenido = "";
+                
+                while ((linea = br.readLine()) != null)
+                    contenido += (linea + "\n");
+                
+                panel.setText(contenido);
             }
-            
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
+            }
         }
     }
     
+    @Override
     public void analizarSintactico(RSyntaxTextArea editor, JTextPane panel)
     {
+        boolean archivoGuardado = true;
+        
         if(file == null)
-            guardarComo(editor);
-        try
+            archivoGuardado = guardarComo(editor);
+        else if(!mem.equals(editor.getText()))
+            archivoGuardado = guardar(editor);
+        
+        if(archivoGuardado)
         {
-            Runtime r = Runtime.getRuntime();
-            Process p;
-            BufferedReader br;
-            
-            String linea;
-            
-            /* Compilador */
-            p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 1");
-
-            br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            
-            panel.setText("");
-            
-            while ((linea = br.readLine()) != null)
+            try
             {
-                panel.setText(panel.getText() + linea + "\n");
+                Runtime r = Runtime.getRuntime();
+                Process p;
+                BufferedReader br;
+
+                String linea;
+
+                p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 1");
+                br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String contenido = "";
+                
+                while ((linea = br.readLine()) != null)
+                    contenido += (linea + "\n");
+                
+                panel.setText(contenido);
             }
-            
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
+            }
         }
     }
     
+    @Override
     public void analizarSemantico(RSyntaxTextArea editor, JTree arbol)
     {
+        boolean archivoGuardado = true;
+        
         if(file == null)
-            guardarComo(editor);
-        try
+            archivoGuardado = guardarComo(editor);
+        else if(!mem.equals(editor.getText()))
+            archivoGuardado = guardar(editor);
+        
+        if(archivoGuardado)
         {
-            Runtime r = Runtime.getRuntime();
-            
-            Process p;
-            BufferedReader br;
-            
-            
-            /* Compilador */
-            p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 2");
+            try
+            {
+                Runtime r = Runtime.getRuntime();
+                Process p;
+                BufferedReader br;
 
-            br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            
-            String linea = "";
-            
-            /* A partir de aqui debes copiar sin hacer cambios ni NADA */
-            
-            DefaultTreeModel modelo = null;
-            
-            ArrayList <DefaultMutableTreeNode> padres = new ArrayList <>();
-            ArrayList <String> labels = new ArrayList <>();
-            
-            for(int i = 0; i < 5; i++)
+                p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 2");
+                br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String linea = "";
+
+                DefaultTreeModel modelo = null;
+
+                ArrayList <DefaultMutableTreeNode> padres = new ArrayList <>();
+                ArrayList <String> labels = new ArrayList <>();
+
+                for(int i = 0; i < 5; i++)
+                {
+                    linea = br.readLine();
+                    System.out.println("LINEA IGNORADA : " + linea);
+                }
+
+                if((linea = br.readLine()) != null)
+                {                
+                    String padre = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
+                    DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(padre);
+                    padres.add(nodo);
+                    labels.add(padre);
+                    modelo = new DefaultTreeModel(nodo);
+                }
+
+                while((linea = br.readLine()) != null)
+                {
+                    String hijo = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
+                    DefaultMutableTreeNode son = new DefaultMutableTreeNode(hijo);
+                    padres.add(son);
+                    labels.add(hijo);
+
+                    String padre = linea.substring(linea.indexOf("(")+2,linea.indexOf("+")-1);                
+                    DefaultMutableTreeNode father = padres.get(labels.lastIndexOf(padre));  
+
+                    int num = Integer.parseInt(linea.substring(linea.indexOf("+")+2,linea.indexOf(")")-1));
+
+                    modelo.insertNodeInto(son, father, num);
+                }
+
+                arbol.setModel(modelo);
+                for (int i = 0; i < arbol.getRowCount(); i++) {
+                    arbol.expandRow(i);
+}
+            }
+            catch (IOException ex)
             {
-                linea = br.readLine();
-                System.out.println("LINEA IGNORADA : " + linea);
+                ex.printStackTrace();
             }
-                        
-            if((linea = br.readLine()) != null)
-            {                
-                String padre = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
-                DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(padre);
-                padres.add(nodo);
-                labels.add(padre);
-                modelo = new DefaultTreeModel(nodo);
-            }
-            
-            while((linea = br.readLine()) != null)
-            {
-                String hijo = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
-                DefaultMutableTreeNode son = new DefaultMutableTreeNode(hijo);
-                padres.add(son);
-                labels.add(hijo);
-                
-                String padre = linea.substring(linea.indexOf("(")+2,linea.indexOf("+")-1);                
-                DefaultMutableTreeNode father = padres.get(labels.indexOf(padre));  
-                
-                int num = Integer.parseInt(linea.substring(linea.indexOf("+")+2,linea.indexOf(")")-1));
-                
-                modelo.insertNodeInto(son, father, num);
-            }
-            
-            arbol.setModel(modelo);
-            
-            
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    @Override
     public void cargar(RSyntaxTextArea editor)
     {
-        try {
-            Scanner scan = new Scanner(new File("plantilla.lm"));
+        try
+        {
+            FileReader fr = new FileReader(new File("plantilla.lm"));
+            BufferedReader br = new BufferedReader(fr);
+            
             String contenido = "";
-            while(scan.hasNextLine())
-            {
-                contenido += (scan.nextLine() + "\n");
-            }
-            scan.close();
+            String linea = "";
+
+            while((linea = br.readLine()) != null)     
+                contenido += (linea + "\n");             
+
             editor.setText(contenido);
-            mem = contenido;
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CMain.class.getName()).log(Level.SEVERE, null, ex);
+            mem = "";
         }
+        catch (FileNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            ex.printStackTrace();
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void personalizar(SyntaxScheme ss)
+    {
+        Style[] styles = ss.getStyles();
+
+        styles[Token.COMMENT_MULTILINE]             = new Style(new Color(120, 120, 120), null, new Font("Consolas", Font.ITALIC, 14));
+        styles[Token.COMMENT_EOL]                   = new Style(new Color(120, 120, 120), null, new Font("Consolas", Font.ITALIC, 14));
+        styles[Token.RESERVED_WORD]                 = new Style(new Color(  0,   0, 255), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.FUNCTION]                      = new Style(new Color(  0, 128, 255), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.LITERAL_NUMBER_DECIMAL_INT]    = new Style(new Color(250,  15, 230), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.LITERAL_STRING_DOUBLE_QUOTE]   = new Style(new Color(250,  15, 230), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.DATA_TYPE]                     = new Style(new Color(  0, 128,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.IDENTIFIER]                    = new Style(new Color(  0,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.WHITESPACE]                    = new Style(new Color(  0,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.SEPARATOR]                     = new Style(new Color(  0,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.OPERATOR]                      = new Style(new Color(  0,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+        styles[Token.ERROR_IDENTIFIER]              = new Style(new Color(255,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
     }
 }

@@ -1,33 +1,55 @@
 package procast.vista;
 
 import javax.swing.BoxLayout;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import procast.controlador.IMain;
 
 public class UIMain extends javax.swing.JFrame
 {
-    
     private IMain interfaceMain;
     private final RSyntaxTextArea textArea = new RSyntaxTextArea(30, 85);  
     
     public UIMain(IMain interfaceMain)
     {
         this.setVisible(true);
-        this.setTitle("ProCast");
+        this.setTitle("ProCast - Archivo Nuevo");
         
         initComponents();
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+
+        /* Agregar LeMa como nuevo lenguaje */
+        AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
+        atmf.putMapping("text/LeMa", "procast.controlador.LeMaTokenMaker");
+        
+        /* Construcción de RSyntaxTextArea */
         textArea.setCodeFoldingEnabled(true);
+        textArea.setSyntaxEditingStyle("text/LeMa");
+        SyntaxScheme ss = textArea.getSyntaxScheme();
         RTextScrollPane sp = new RTextScrollPane(textArea);
+        
+        /* Agregar editor RSyntaxTextArea al panel */
         panel.add(sp);
         panel.setLayout(new BoxLayout(this.panel, BoxLayout.X_AXIS));
         pack();
+        
         setLocationRelativeTo(null);
         this.interfaceMain = interfaceMain;
-
+        
+        interfaceMain.personalizar(ss);
         interfaceMain.cargar(textArea);
+        
+        /*
+        try
+        {
+            textArea.addLineHighlight(2, (new Color(251, 198, 201)));
+        } catch (BadLocationException ex)
+        {
+            Logger.getLogger(UIMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        */
     }
 
     @SuppressWarnings("unchecked")
@@ -44,6 +66,8 @@ public class UIMain extends javax.swing.JFrame
         jPanel2 = new javax.swing.JPanel();
         panel = new javax.swing.JPanel();
         pnl = new javax.swing.JTabbedPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txpLexico = new javax.swing.JTextPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         txpSintactico = new javax.swing.JTextPane();
         jPanel1 = new javax.swing.JPanel();
@@ -51,8 +75,6 @@ public class UIMain extends javax.swing.JFrame
         ast = new javax.swing.JTree();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        txpLexico = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         mnArchivo = new javax.swing.JMenu();
         mnNuevo = new javax.swing.JMenuItem();
@@ -149,8 +171,13 @@ public class UIMain extends javax.swing.JFrame
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 467, Short.MAX_VALUE)
         );
+
+        txpLexico.setEditable(false);
+        jScrollPane3.setViewportView(txpLexico);
+
+        pnl.addTab("Analizador Lexico", jScrollPane3);
 
         txpSintactico.setEditable(false);
         jScrollPane1.setViewportView(txpSintactico);
@@ -158,6 +185,18 @@ public class UIMain extends javax.swing.JFrame
         pnl.addTab("Analizador Sintáctico", jScrollPane1);
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("AST");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("nodo");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("nodo1");
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("nodo1");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("nodo");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("nodo2");
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("nodo2");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
         ast.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane2.setViewportView(ast);
 
@@ -189,11 +228,6 @@ public class UIMain extends javax.swing.JFrame
 
         pnl.addTab("Analizador Semantico", jPanel1);
 
-        txpLexico.setEditable(false);
-        jScrollPane3.setViewportView(txpLexico);
-
-        pnl.addTab("Analizador Lexico", jScrollPane3);
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -210,7 +244,7 @@ public class UIMain extends javax.swing.JFrame
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnl)
+                    .addComponent(pnl, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -253,6 +287,8 @@ public class UIMain extends javax.swing.JFrame
 
         mnArchivo.setText("Archivo");
 
+        mnNuevo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        mnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/new.png"))); // NOI18N
         mnNuevo.setText("Nuevo");
         mnNuevo.addActionListener(new java.awt.event.ActionListener()
         {
@@ -263,6 +299,8 @@ public class UIMain extends javax.swing.JFrame
         });
         mnArchivo.add(mnNuevo);
 
+        mnAbrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        mnAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/open.png"))); // NOI18N
         mnAbrir.setText("Abrir");
         mnAbrir.addActionListener(new java.awt.event.ActionListener()
         {
@@ -273,6 +311,8 @@ public class UIMain extends javax.swing.JFrame
         });
         mnArchivo.add(mnAbrir);
 
+        mnGuardar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        mnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/save.png"))); // NOI18N
         mnGuardar.setText("Guardar");
         mnGuardar.addActionListener(new java.awt.event.ActionListener()
         {
@@ -283,6 +323,8 @@ public class UIMain extends javax.swing.JFrame
         });
         mnArchivo.add(mnGuardar);
 
+        mnGuardarComo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        mnGuardarComo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/procast/recursos/save_as.png"))); // NOI18N
         mnGuardarComo.setText("Guardar como");
         mnGuardarComo.addActionListener(new java.awt.event.ActionListener()
         {

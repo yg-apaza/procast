@@ -13,7 +13,7 @@
 * Obligatorio	
 */
 
-vacio principal()
+principal()
 {
 	/** Area de declaracion de variables */
 	
