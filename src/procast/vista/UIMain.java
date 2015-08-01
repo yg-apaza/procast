@@ -150,6 +150,7 @@ public class UIMain extends javax.swing.JFrame
 
         pnl.addTab("Analizador Semantico", jPanel1);
 
+        txpCompilador.setEditable(false);
         txpCompilador.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
         jScrollPane5.setViewportView(txpCompilador);
 
