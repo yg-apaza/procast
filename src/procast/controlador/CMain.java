@@ -17,6 +17,13 @@ import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -191,6 +198,13 @@ public class CMain implements IMain
     @Override
     public void analizarLexico(RSyntaxTextArea editor, JTextPane panel)
     {
+        panel.addStyle("arch", null);
+        StyleConstants.setForeground(panel.getStyle("arch"), Color.BLUE);
+        panel.addStyle("normal", null);
+        StyleConstants.setForeground(panel.getStyle("normal"), Color.BLACK);
+        panel.addStyle("error", null);
+        StyleConstants.setForeground(panel.getStyle("error"), Color.BLACK);
+        
         boolean archivoGuardado = true;
         
         if(file == null)
@@ -210,18 +224,29 @@ public class CMain implements IMain
                 
                 p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 0");
                 br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String contenido = "";
-                
+                panel.setText("");
                 while ((linea = br.readLine()) != null)
-                    contenido += (linea + "\n");
-                
-                panel.setText(contenido);
+                {
+                    if(linea.contains("Archivo"))
+                        appendToPane(panel, "arch", linea + "\n");
+                    else if(linea.contains("Error"))
+                        appendToPane(panel, "error", linea + "\n");
+                    else
+                        appendToPane(panel, "normal", linea + "\n");
+                }
             }
             catch (IOException ex)
             {
                 ex.printStackTrace();
             }
         }
+    }
+    
+    private void appendToPane(JTextPane tp, String estilo, String msg)
+    {
+        StyledDocument doc = tp.getStyledDocument();
+        try { doc.insertString(doc.getLength(), msg, tp.getStyle(estilo));}
+        catch (BadLocationException e){}
     }
     
     @Override
