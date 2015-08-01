@@ -37,6 +37,10 @@ public class UIMain extends javax.swing.JFrame
         setLocationRelativeTo(null);
         this.interfaceMain = interfaceMain;
         
+        interfaceMain.estilos(this.txpLexico);
+        interfaceMain.estilos(this.txpSintactico);
+        interfaceMain.estilos(this.txpSemantico);
+        interfaceMain.estilos(this.txpCompilador);
         interfaceMain.personalizar(ss);
         interfaceMain.cargar(textArea);
         
@@ -68,7 +72,7 @@ public class UIMain extends javax.swing.JFrame
         jScrollPane2 = new javax.swing.JScrollPane();
         ast = new javax.swing.JTree();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        txpSemantico = new javax.swing.JTextPane();
         jScrollPane5 = new javax.swing.JScrollPane();
         txpCompilador = new javax.swing.JTextPane();
         jPanel3 = new javax.swing.JPanel();
@@ -101,12 +105,16 @@ public class UIMain extends javax.swing.JFrame
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
+        pnl.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+
         txpLexico.setEditable(false);
+        txpLexico.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
         jScrollPane3.setViewportView(txpLexico);
 
         pnl.addTab("Analizador Lexico", jScrollPane3);
 
         txpSintactico.setEditable(false);
+        txpSintactico.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
         jScrollPane1.setViewportView(txpSintactico);
 
         pnl.addTab("Analizador Sintáctico", jScrollPane1);
@@ -115,7 +123,9 @@ public class UIMain extends javax.swing.JFrame
         ast.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane2.setViewportView(ast);
 
-        jScrollPane6.setViewportView(jTextPane1);
+        txpSemantico.setEditable(false);
+        txpSemantico.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
+        jScrollPane6.setViewportView(txpSemantico);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -140,6 +150,7 @@ public class UIMain extends javax.swing.JFrame
 
         pnl.addTab("Analizador Semantico", jPanel1);
 
+        txpCompilador.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
         jScrollPane5.setViewportView(txpCompilador);
 
         pnl.addTab("Compilador", jScrollPane5);
@@ -269,9 +280,9 @@ public class UIMain extends javax.swing.JFrame
                         .addComponent(btnASintactico)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnASemantico)
-                        .addGap(332, 332, 332)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnCompilar)
-                        .addGap(18, 18, 18)
+                        .addGap(176, 176, 176)
                         .addComponent(btnCompilar1)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jSeparator1))
@@ -402,7 +413,7 @@ public class UIMain extends javax.swing.JFrame
 
     private void btnASemanticoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnASemanticoActionPerformed
     {//GEN-HEADEREND:event_btnASemanticoActionPerformed
-        interfaceMain.analizarSemantico(textArea, ast);
+        interfaceMain.analizarSemantico(textArea, ast, txpSemantico);
     }//GEN-LAST:event_btnASemanticoActionPerformed
 
    
@@ -423,7 +434,6 @@ public class UIMain extends javax.swing.JFrame
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JMenuItem mnAbrir;
     private javax.swing.JMenuItem mnAcerca;
     private javax.swing.JMenu mnArchivo;
@@ -435,6 +445,7 @@ public class UIMain extends javax.swing.JFrame
     private javax.swing.JTabbedPane pnl;
     private javax.swing.JTextPane txpCompilador;
     private javax.swing.JTextPane txpLexico;
+    private javax.swing.JTextPane txpSemantico;
     private javax.swing.JTextPane txpSintactico;
     // End of variables declaration//GEN-END:variables
 }

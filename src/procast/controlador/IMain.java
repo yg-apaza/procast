@@ -14,7 +14,8 @@ public interface IMain
     public void analizarLexico(RSyntaxTextArea editor, JTextPane panel);
     public void cargar(RSyntaxTextArea editor);
     public void analizarSintactico(RSyntaxTextArea editor, JTextPane panel);
-    public void analizarSemantico(RSyntaxTextArea editor, JTree arbol);
+    public void analizarSemantico(RSyntaxTextArea editor, JTree arbol, JTextPane panel);
 
     public void personalizar(SyntaxScheme ss);
+    public void estilos(JTextPane panel);
 }

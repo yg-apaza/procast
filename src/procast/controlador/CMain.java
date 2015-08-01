@@ -17,12 +17,8 @@ import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -143,9 +139,7 @@ public class CMain implements IMain
                 return true;
             }
             else
-            {
                 return guardarComo(editor);
-            }
         }
         catch(FileNotFoundException ex)
         {
@@ -198,13 +192,6 @@ public class CMain implements IMain
     @Override
     public void analizarLexico(RSyntaxTextArea editor, JTextPane panel)
     {
-        panel.addStyle("arch", null);
-        StyleConstants.setForeground(panel.getStyle("arch"), Color.BLUE);
-        panel.addStyle("normal", null);
-        StyleConstants.setForeground(panel.getStyle("normal"), Color.BLACK);
-        panel.addStyle("error", null);
-        StyleConstants.setForeground(panel.getStyle("error"), Color.BLACK);
-        
         boolean archivoGuardado = true;
         
         if(file == null)
@@ -231,6 +218,8 @@ public class CMain implements IMain
                         appendToPane(panel, "arch", linea + "\n");
                     else if(linea.contains("Error"))
                         appendToPane(panel, "error", linea + "\n");
+                    else if(linea.contains("Finalizado"))
+                        appendToPane(panel, "final", linea + "\n");
                     else
                         appendToPane(panel, "normal", linea + "\n");
                 }
@@ -241,17 +230,11 @@ public class CMain implements IMain
             }
         }
     }
-    
-    private void appendToPane(JTextPane tp, String estilo, String msg)
-    {
-        StyledDocument doc = tp.getStyledDocument();
-        try { doc.insertString(doc.getLength(), msg, tp.getStyle(estilo));}
-        catch (BadLocationException e){}
-    }
-    
+   
     @Override
     public void analizarSintactico(RSyntaxTextArea editor, JTextPane panel)
     {
+        this.ventanaPrincipal.pack();
         boolean archivoGuardado = true;
         
         if(file == null)
@@ -271,12 +254,18 @@ public class CMain implements IMain
 
                 p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 1");
                 br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String contenido = "";
-                
+                panel.setText("");
                 while ((linea = br.readLine()) != null)
-                    contenido += (linea + "\n");
-                
-                panel.setText(contenido);
+                {
+                    if(linea.contains("Archivo"))
+                        appendToPane(panel, "arch", linea + "\n");
+                    else if(linea.contains("Error"))
+                        appendToPane(panel, "error", linea + "\n");
+                    else if(linea.contains("Finalizado"))
+                        appendToPane(panel, "final", linea + "\n");
+                    else
+                        appendToPane(panel, "normal", linea + "\n");
+                }
             }
             catch (IOException ex)
             {
@@ -286,7 +275,7 @@ public class CMain implements IMain
     }
     
     @Override
-    public void analizarSemantico(RSyntaxTextArea editor, JTree arbol)
+    public void analizarSemantico(RSyntaxTextArea editor, JTree arbol, JTextPane panel)
     {
         boolean archivoGuardado = true;
         
@@ -311,15 +300,26 @@ public class CMain implements IMain
 
                 ArrayList <DefaultMutableTreeNode> padres = new ArrayList <>();
                 ArrayList <String> labels = new ArrayList <>();
-
-                for(int i = 0; i < 5; i++)
+                panel.setText("");
+                
+                boolean flag = true;
+                while (((linea = br.readLine()) != null) && flag)
                 {
-                    linea = br.readLine();
-                    System.out.println("LINEA IGNORADA : " + linea);
+                    if(linea.contains("Archivo"))
+                        appendToPane(panel, "arch", linea + "\n");
+                    else if(linea.contains("Error"))
+                        appendToPane(panel, "error", linea + "\n");
+                    else if(linea.contains("Finalizado"))
+                    {
+                        flag = false;
+                        appendToPane(panel, "final", linea + "\n");
+                    }
+                    else
+                        appendToPane(panel, "normal", linea + "\n");
                 }
 
                 if((linea = br.readLine()) != null)
-                {                
+                {
                     String padre = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
                     DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(padre);
                     padres.add(nodo);
@@ -352,6 +352,13 @@ public class CMain implements IMain
                 ex.printStackTrace();
             }
         }
+    }
+   
+    private void appendToPane(JTextPane tp, String estilo, String msg)
+    {
+        StyledDocument doc = tp.getStyledDocument();
+        try { doc.insertString(doc.getLength(), msg, tp.getStyle(estilo));}
+        catch (BadLocationException e){}
     }
     
     @Override
@@ -402,5 +409,20 @@ public class CMain implements IMain
         styles[Token.SEPARATOR]                     = new Style(new Color(  0,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
         styles[Token.OPERATOR]                      = new Style(new Color(  0,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
         styles[Token.ERROR_IDENTIFIER]              = new Style(new Color(255,   0,   0), null, new Font("Consolas", Font.TRUETYPE_FONT, 14));
+    }
+    
+    public void estilos(JTextPane panel)
+    {
+        panel.addStyle("arch", null);
+        StyleConstants.setForeground(panel.getStyle("arch"), Color.BLUE);
+        panel.addStyle("normal", null);
+        StyleConstants.setForeground(panel.getStyle("normal"), Color.BLACK);
+        panel.addStyle("error", null);
+        StyleConstants.setForeground(panel.getStyle("error"), Color.RED);
+        panel.addStyle("warning", null);
+        StyleConstants.setForeground(panel.getStyle("warning"), new Color(239, 186, 0));
+        panel.addStyle("final", null);
+        StyleConstants.setForeground(panel.getStyle("final"), Color.BLACK);
+        StyleConstants.setBold(panel.getStyle("final"), true);
     }
 }
