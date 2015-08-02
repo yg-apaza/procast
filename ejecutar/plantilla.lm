@@ -1,26 +1,20 @@
-/**
+/*
 * Area de declaracion de variables y constantes
 * Opcional
 */
 
-/*		
-* Area de declaracion de función de prototipos
-* Opcional	
+/*
+* Area de declaracion de funcion de prototipos
+* Opcional
 */
 
-/*		
-* Area del programa principal
-* Obligatorio	
-*/
-
-vacio principal()
+principal()
 {
-	/** Area de declaracion de variables */
-	
-	/** Area de sentencias */
+	/* Area de declaracion de variables */
+	/* Area de sentencias */
 }
 
-/*		
+/*
 * Area de definicion de funciones
-* Opcional	
+* Opcional
 */
