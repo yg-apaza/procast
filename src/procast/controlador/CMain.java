@@ -294,7 +294,7 @@ public class CMain implements IMain
 
                 p = r.exec("cmd /c java -jar LeMa.jar " + file.getAbsolutePath() + " 2");
                 br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String linea = "";
+                String linea;
 
                 DefaultTreeModel modelo = null;
 
@@ -317,7 +317,6 @@ public class CMain implements IMain
                     else
                         appendToPane(panel, "normal", linea + "\n");
                 }
-
                 if((linea = br.readLine()) != null)
                 {
                     String padre = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
@@ -327,7 +326,7 @@ public class CMain implements IMain
                     modelo = new DefaultTreeModel(nodo);
                 }
 
-                while((linea = br.readLine()) != null)
+                while((linea = br.readLine()) != null && (!linea.equals("")))
                 {
                     String hijo = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
                     DefaultMutableTreeNode son = new DefaultMutableTreeNode(hijo);

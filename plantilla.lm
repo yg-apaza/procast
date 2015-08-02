@@ -3,20 +3,14 @@
 * Opcional
 */
 
-/*		
-* Area de declaracion de función de prototipos
-* Opcional
-*/
-
 /*
-* Area del programa principal
-* Obligatorio
+* Area de declaracion de funcion de prototipos
+* Opcional
 */
 
 principal()
 {
 	/* Area de declaracion de variables */
-	
 	/* Area de sentencias */
 }
 
