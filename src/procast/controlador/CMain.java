@@ -234,7 +234,6 @@ public class CMain implements IMain
     @Override
     public void analizarSintactico(RSyntaxTextArea editor, JTextPane panel)
     {
-        this.ventanaPrincipal.pack();
         boolean archivoGuardado = true;
         
         if(file == null)
