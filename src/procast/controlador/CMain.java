@@ -327,6 +327,7 @@ public class CMain implements IMain
 
                 while((linea = br.readLine()) != null && (!linea.equals("")))
                 {
+                    System.out.println(linea);
                     String hijo = linea.substring(linea.indexOf("[")+2,linea.indexOf("]")-1);
                     DefaultMutableTreeNode son = new DefaultMutableTreeNode(hijo);
                     padres.add(son);
@@ -336,6 +337,7 @@ public class CMain implements IMain
                     DefaultMutableTreeNode father = padres.get(labels.lastIndexOf(padre));  
 
                     int num = Integer.parseInt(linea.substring(linea.indexOf("+")+2,linea.indexOf(")")-1));
+
 
                     modelo.insertNodeInto(son, father, num);
                 }
